@@ -32,10 +32,10 @@ pub fn machine() -> Result<MachineSnapshot, AuthoringError> {
     let assistant = Vm::assistant("usr-assistant", &firewall, GiB(16))?;
     machine.add(&assistant)?;
 
-    // Isolated execution only; the existing GUI clipboard workflow retains all traffic.
-    let clipboard = Vm::hermit("sys-clipboard", MiB(32), HermitApplication::Clipboard)?;
+    let clipboard = Vm::hermit("sys-clipboard", MiB(128), HermitApplication::Clipboard)?;
     clipboard.set_autostart(true);
     machine.add(&clipboard)?;
+    components::clipboard::connect(&gui, &clipboard);
 
     machine.set_host(&gui, &firewall, &controller);
     components::diagnostics::enable(&mut machine, &assistant);
