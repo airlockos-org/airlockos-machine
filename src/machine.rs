@@ -2,10 +2,12 @@
 
 use crate::{
     components,
-    model::{AuthoringError, GiB, HostPlatform, Machine, MachineSnapshot, Vm},
+    model::{
+        AuthoringError, GiB, HermitApplication, HostPlatform, Machine, MachineSnapshot, MiB, Vm,
+    },
 };
 
-/// Connect the six physical-machine VMs before freezing their validated identities and resources.
+/// Connect the declared physical-machine VMs before freezing their validated identities and resources.
 pub fn machine() -> Result<MachineSnapshot, AuthoringError> {
     let mut machine = Machine::default();
     machine.set_host_platform(HostPlatform::UsbLab);
@@ -29,6 +31,11 @@ pub fn machine() -> Result<MachineSnapshot, AuthoringError> {
 
     let assistant = Vm::assistant("usr-assistant", &firewall, GiB(16))?;
     machine.add(&assistant)?;
+
+    // Isolated execution only; the existing GUI clipboard workflow retains all traffic.
+    let clipboard = Vm::hermit("sys-clipboard", MiB(32), HermitApplication::Clipboard)?;
+    clipboard.set_autostart(true);
+    machine.add(&clipboard)?;
 
     machine.set_host(&gui, &firewall, &controller);
     components::diagnostics::enable(&mut machine, &assistant);
