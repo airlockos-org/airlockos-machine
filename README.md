@@ -1,8 +1,12 @@
 # Machine configuration
 
-Edit [src/machine.rs](src/machine.rs) to configure this computer's VMs,
-connections and enabled features. [GUI border settings](assets/sys-gui/gnome/gui-style.json)
-are the remaining separate machine setting. Shared implementation, validation
+Customize each NixOS VM through its named module in [vms/](vms/). These are ordinary
+NixOS modules for packages, services and settings, composed with Airlock's defaults.
+Files imported by a module belong in this repository and must be committed too.
+
+Edit [src/machine.rs](src/machine.rs) for VM identities, connections and enabled
+Airlock features. [GUI border settings](assets/sys-gui/gnome/gui-style.json)
+are a separate machine setting. Shared implementation, validation
 machines and operating guidance come from the pinned Airlock application source.
 
 The GitHub repository is `airlockos-org/airlockos-machine`. The parent development
@@ -16,6 +20,8 @@ approval, deployment and verification; local commits do not require a GitHub pus
 `make prepare` emits an inspectable Nix build tree outside Git. It does not
 build or deploy the system. Application dependencies and their offline Cargo
 sources are supplied by the installed authoring environment.
+Nix-only VM edits reuse the Rust authoring program; they still require NixOS
+evaluation and the normal reviewed build and deployment.
 
 Original configuration is [MIT licensed](LICENSE). See [SECURITY.md](SECURITY.md)
 and [third-party notices](THIRD_PARTY.md) for security and dependency terms.
