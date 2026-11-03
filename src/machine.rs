@@ -17,6 +17,7 @@ pub fn machine() -> Result<MachineSnapshot, AuthoringError> {
     machine.add(&network)?;
 
     let firewall = Vm::hermit_firewall("sys-firewall", &network)?;
+    firewall.set_autostart(true);
     firewall.set_feature("ipv6", "1")?;
     machine.add(&firewall)?;
 
